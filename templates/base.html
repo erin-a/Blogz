@@ -1,18 +1,18 @@
 <!doctype html>
 <html>
     <head>
-        <title>{{title}}</title>
+        <title>Bloggidy</title>
         <style>
             .error {
                 color: red;
             }
         </style>
+        <nav>
+                <a href="/blog">main blog page</a> |
+                <a href="/newpost">add new blog</a> |
+              </nav>
     </head>
 <body>
-
-    <div>
-        <a href='/logout'>log out</a>
-    </div>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
         <ul> 

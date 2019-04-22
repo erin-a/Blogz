@@ -1,32 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+
     <h1>Create a New Blog Post</h1>
-    <form method='post'>
+    <form method='post' action="/post_entry" style="display:inline-block;"> <br>
         <label>
             Blog Title:
             <input type="text" name='title' />
-        </label>
+        </label> <br><br>
         <label>
             Blog Body:
-            <input type="text" name='body' />
+            <textarea name="body">Write your blog.</textarea> <br><br>
         </label>
         <input type="submit" value='Add Your Post' />
     </form>
     <hr />
 
-    {% if body|length == 0 %}
-    <p>No posts yet</p>
+    {% if entries|length == 0 %}
+    <p>Nothing posted yet</p>
     {% else %}
 
     {% endif %}
-
-    <hr />
-    <h2>Previous Blog Posts</h2>
-    <ul>
-        {% for item in previous_items %}
-        <li>{{item.title}}</li>
-        {% endfor %}
-    </ul>
 
 {% endblock %}

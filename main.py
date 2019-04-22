@@ -44,7 +44,7 @@ def add_entry():
 def display_entries():
 #    previous_entries = Blog.query.filter_by().all() #what do i filter by
 
-    return render_template('all_posts.html', title=title, body=body)
+    return render_template('allposts.html')
 
 
 

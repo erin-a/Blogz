@@ -7,10 +7,13 @@
         <label>
             Blog Title:
             <input type="text" name='title' />
+            <p class="error">{{title_error}}</p>
         </label> <br><br>
         <label>
             Blog Body:
-            <textarea name="body">Write your blog.</textarea> <br><br>
+            <textarea name="body"></textarea> 
+            <p class="error">{{body_error}}</p>
+            <br><br>
         </label>
         <input type="submit" value='Add Your Post' />
     </form>

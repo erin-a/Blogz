@@ -25,6 +25,35 @@ class Blog(db.Model):
 
 # instrustions says i need separate handler class for each page - but I only have 1...
 
+@app.route('/newpost', methods=['POST', 'GET'])
+def verify_entry():
+    title = request.form['title']
+    body = request.form['body']
+    title_error = ''
+    body_error = ''
+
+    if len(title) < 1:
+        title_error = "Please enter the title."
+    
+    if len(title) > 120:
+        title_error = "Titles must be less than 120 characters long."
+
+    if len(body) < 1:
+        body_error = "Body of blog post is required. Because, bloggidy."
+
+    if len(body) > 5000:
+        body_error = "Chatty Kathy, wrap it up under 5000 characters. Please and thank, you."
+
+    if not title_error and not body_error:
+        return render_template ('blog.html', title=title) # not sure what something=something to use
+    else:
+        return render_template ('newpost.html', title_error=title_error, body_error=body_error)
+
+#create app to display blog entries
+@app.route('/all', methods=['GET', 'POST'])
+def display_entries():
+    blog_entries = Blog.query.all()
+    return render_template('allposts.html', title = "Bloggidy", blog_entries=blog_entries)
 #create app for adding an entry to the database
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_entry():
@@ -33,25 +62,27 @@ def add_entry():
         body = request.form['body']
         new_entry = Blog(title, body)
         db.session.add(new_entry)
-        db.session.commit()
+        db.session.commit()       
 
     blog_entries = Blog.query.all()
 
-    return render_template('newpost.html', blog_entries=blog_entries)
+    return render_template('newpost.html', title = "Bloggidy", blog_entries=blog_entries)
 
-# where do i put form requests    
-# where do i put queries?    
 
-#create app to display blog entries
-@app.route('/all', methods=['GET'])
-def display_entries():
-    #Blogs = Blog.query.filter_by().all() #what do i filter by
-    blog_entries = Blog.query.all()
-    return render_template('allposts.html', title = "Bloggidy", blog_entries=blog_entries)
 
 #@app.route('/blog', methods=['GET'])
-#def display_entries():
+#def display_blog():
+#    id = request.form['id']
+#    title = request.form['title']
+#    body = request.form['body']
+#    specific_post = Blog(title, body)
+#    blog_post = Blog.query.filter(id)
+#    return render_template('base.html', title = "Bloggidy", specific_post=specific_post)
 
 
 if __name__ == '__main__':
     app.run()
+
+
+
+    #need to query database to show specific blog entry

@@ -3,7 +3,7 @@
 {% block content %}
 
     <h1>Create a New Blog Post</h1>
-    <form method='post' action="/post_entry" style="display:inline-block;"> <br>
+    <form method='post' action="/newpost" style="display:inline-block;"> <br>
         <label>
             Blog Title:
             <input type="text" name='title' />
@@ -16,9 +16,17 @@
     </form>
     <hr />
 
-    {% if entries|length == 0 %}
+    {% if blog_entries|length == 0 %}
     <p>Nothing posted yet</p>
     {% else %}
+
+    <h1>Previous Blog Posts</h1>
+    <ul>
+        {% for item in blog_entries %}
+        {{item.title}}<br>
+        {{item.body}}<br>
+        {% endfor %}
+    </ul>
 
     {% endif %}
 

@@ -6,7 +6,7 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://get-it-done:beproductive@localhost:8889/get-it-done'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:beproductive@localhost:8889/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 #app.secret_key = "34asdf98" 
@@ -18,9 +18,9 @@ class Blog(db.Model):
     body = db.Column(db.String(5000))
     #owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, name): #will need to add owner inside parenthesis if we reanact that
-        self.title = name
-        self.posted = False
+    def __init__(self, title, body): #will need to add owner inside parentheses if we reanact that
+        self.title = title
+        self.body = body #if this is supposed to be unique, wouldn't the id be better to use here? do i need to require the blog titles to be unique?
         #self.owner = owner
 
 #create app for adding an entry to the database
@@ -29,12 +29,18 @@ def add_entry():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_entry = Blog(title, body) 
+        new_entry = Blog(title, body)
         db.session.add(new_entry)
         db.session.commit()
 
+        #body = request.form['body']
+        #new_entry = Blog(body) 
+        #db.session.add(new_entry)
+        #db.session.commit()
 
-    return render_template('newpost.html')
+    blog_entries = Blog.query.all()
+
+    return render_template('newpost.html', blog_entries=blog_entries)
 
 # where do i put form requests    
 # where do i put queries?    
@@ -42,9 +48,9 @@ def add_entry():
 #create app to display blog entries
 @app.route('/blog', methods=['GET'])
 def display_entries():
-#    previous_entries = Blog.query.filter_by().all() #what do i filter by
+    Blogs = Blog.query.filter_by().all() #what do i filter by
 
-    return render_template('allposts.html')
+    return render_template('allposts.html', title = "Bloggidy", Blogs=Blogs)
 
 
 

@@ -23,6 +23,8 @@ class Blog(db.Model):
         self.body = body #if this is supposed to be unique, wouldn't the id be better to use here? do i need to require the blog titles to be unique?
         #self.owner = owner
 
+# instrustions says i need separate handler class for each page - but I only have 1...
+
 #create app for adding an entry to the database
 @app.route('/newpost', methods=['POST', 'GET'])
 def add_entry():
@@ -33,11 +35,6 @@ def add_entry():
         db.session.add(new_entry)
         db.session.commit()
 
-        #body = request.form['body']
-        #new_entry = Blog(body) 
-        #db.session.add(new_entry)
-        #db.session.commit()
-
     blog_entries = Blog.query.all()
 
     return render_template('newpost.html', blog_entries=blog_entries)
@@ -46,13 +43,14 @@ def add_entry():
 # where do i put queries?    
 
 #create app to display blog entries
-@app.route('/blog', methods=['GET'])
+@app.route('/all', methods=['GET'])
 def display_entries():
-    Blogs = Blog.query.filter_by().all() #what do i filter by
+    #Blogs = Blog.query.filter_by().all() #what do i filter by
+    blog_entries = Blog.query.all()
+    return render_template('allposts.html', title = "Bloggidy", blog_entries=blog_entries)
 
-    return render_template('allposts.html', title = "Bloggidy", Blogs=Blogs)
-
-
+#@app.route('/blog', methods=['GET'])
+#def display_entries():
 
 
 if __name__ == '__main__':

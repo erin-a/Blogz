@@ -23,8 +23,8 @@
     <h1>Previous Blog Posts</h1>
     <ul>
         {% for item in blog_entries %}
-        {{item.title}}<br>
-        {{item.body}}<br>
+        <h3>{{item.title}}</h3>
+        {{item.body}}<br><br>
         {% endfor %}
     </ul>
 

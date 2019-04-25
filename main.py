@@ -23,55 +23,54 @@ class Blog(db.Model):
         self.body = body #if this is supposed to be unique, wouldn't the id be better to use here? do i need to require the blog titles to be unique?
         #self.owner = owner
 
-# instrustions says i need separate handler class for each page - but I only have 1...
+# instructions says i need separate handler class for each page - but I only have 1...
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def verify_entry():
-    title = request.form['title']
-    body = request.form['body']
-    title_error = ''
-    body_error = ''
-
-    if len(title) < 1:
-        title_error = "Please enter the title."
-    
-    if len(title) > 120:
-        title_error = "Titles must be less than 120 characters long."
-
-    if len(body) < 1:
-        body_error = "Body of blog post is required. Because, bloggidy."
-
-    if len(body) > 5000:
-        body_error = "Chatty Kathy, wrap it up under 5000 characters. Please and thank, you."
-
-    if not title_error and not body_error:
-        return render_template ('blog.html', title=title) # not sure what something=something to use
-    else:
-        return render_template ('newpost.html', title_error=title_error, body_error=body_error)
-
-#create app to display blog entries
-@app.route('/all', methods=['GET', 'POST'])
-def display_entries():
-    blog_entries = Blog.query.all()
-    return render_template('allposts.html', title = "Bloggidy", blog_entries=blog_entries)
-#create app for adding an entry to the database
-@app.route('/newpost', methods=['POST', 'GET'])
-def add_entry():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        new_entry = Blog(title, body)
-        db.session.add(new_entry)
-        db.session.commit()       
+        title_error = ''
+        body_error = ''
 
+        if len(title) < 1:
+            title_error = "Please enter the title."
+        
+        if len(title) > 120:
+            title_error = "Titles must be less than 120 characters long."
+
+        if len(body) < 1:
+            body_error = "Body of blog post is required. Because, Bloggidy."
+
+        if len(body) > 5000:
+            body_error = "Chatty Kathy, wrap it up under 5000 characters. Please and thank, you."
+
+        if not title_error and not body_error:
+            # losing the formatting of the list of existing blogs beneath it
+            new_entry = Blog(title, body)
+            db.session.add(new_entry)
+            db.session.commit()    
+            blog_entries = Blog.query.all() 
+            return render_template('newpost.html', title = "Bloggidy", blog_entries=blog_entries)
+        else:
+            # needs to return/redirect the page below, it is not doing this now
+            return render_template ('newpost.html', title_error=title_error, body_error=body_error)
+
+    return render_template('newpost.html')
+
+
+#create app to display all blog entries
+@app.route('/blog', methods=['GET', 'POST'])
+def display_entries():
     blog_entries = Blog.query.all()
+    return render_template('blog.html', title = "Bloggidy", blog_entries=blog_entries)
 
-    return render_template('newpost.html', title = "Bloggidy", blog_entries=blog_entries)
+#for individual blog pages
+@app.route('/id', methods=['GET'])
+def display_blog():
+    title = request.args.get('title')
+    return render_template('singlepost.html', title=title)
 
-
-
-#@app.route('/blog', methods=['GET'])
-#def display_blog():
 #    id = request.form['id']
 #    title = request.form['title']
 #    body = request.form['body']
@@ -79,10 +78,5 @@ def add_entry():
 #    blog_post = Blog.query.filter(id)
 #    return render_template('base.html', title = "Bloggidy", specific_post=specific_post)
 
-
 if __name__ == '__main__':
     app.run()
-
-
-
-    #need to query database to show specific blog entry

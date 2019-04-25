@@ -2,9 +2,18 @@
 
 {% block content %}
 
-    {% for item in blog_post %}
-    <h3>{{item.title}}</h3>
-    {{item.body}}<br><br>
-    {% endfor %}
+    {% if blog_entries|length == 0 %}
+    <p>Nothing posted yet</p>
+    {% else %}
+
+    <h1>Previous Blog Posts</h1>
+    <ul>
+        {% for item in blog_entries %}
+        <h3>{{item.title}}</h3>
+        {{item.body}}<br><br>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
 
 {% endblock %}

@@ -9,6 +9,7 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:beproductive@localhost:8889/build-a-blog'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+display_blog = '/blog?id={0}'
 #app.secret_key = "34asdf98" 
 
 # definte table and columns to store blog entries
@@ -16,12 +17,16 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(5000))
+    #this_entry = db.Column(db.Boolean) #created to identify whether item is the item on the specific page
     #owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __init__(self, title, body): #will need to add owner inside parentheses if we reanact that
         self.title = title
         self.body = body #if this is supposed to be unique, wouldn't the id be better to use here? do i need to require the blog titles to be unique?
         #self.owner = owner
+        #self.this_entry = False
+
+
 
 # instructions says i need separate handler class for each page - but I only have 1...
 
@@ -51,7 +56,7 @@ def create_entry():
             db.session.add(new_entry)
             db.session.commit()    
             blog_entries = Blog.query.all() 
-            return redirect('/test')
+            return 'YUP' #redirect('/blog?id={0}')
             #return render_template('newpost.html', title = "Bloggidy", blog_ent`ries=blog_entries)
         else:
             # needs to return/redirect the page below, it is not doing this now
@@ -59,28 +64,43 @@ def create_entry():
 
     return render_template('newpost.html')
 
-
 #create app to display all blog entries
 @app.route('/blog', methods=['GET', 'POST'])
 def display_entries():
     blog_entries = Blog.query.all()
     return render_template('blog.html', title = "Bloggidy", blog_entries=blog_entries)
 
-#for individual blog pages
-@app.route('/test', methods=['GET'])
-#'/blog?id={0}'
-def display_blog():
-#    id = request.form['id']
-    blog_entries = request.args.get(id)
-    blog_id = request.args.get('id')
-    return render_template('singlepost.html', id=id)
 
- #   id = request.form['id']
- #   title = request.form['title']
- #   body = request.form['body']
- #   specific_post = Blog(title, body)
- #   blog_post = Blog.query.filter(id)
- #   return render_template('base.html', title = "Bloggidy", specific_post=specific_post)
+
+
+
+#for individual blog pages
+@app.route('/display_blog', methods=['GET'])
+def display_blog():
+    
+    blog_id = request.args.get('id') #isn't this is pulling the information from the html input form, not a database
+    #one_blog = Blog.query.filter_by(id=blog_id).first()
+
+    # create a string for the URL of the blog to concantenate the full URL
+    #blog_id = request.args.get('id')
+    #display_blog = blog_id
+
+    # different idea - filter by id with jinja inheritance {0}
+    #thing = Blog.query.filter_by(id = '{0}')
+
+    # i dont remember what this idea was
+    #blog = Blog.query.get(blog_id)
+    #blog_entries = Blog.query.all()
+    #blog_title = request.args.get('title')
+    #blog_body = request.args.get('body')
+    return render_template('singlepost.html', blog_id=blog_id)
 
 if __name__ == '__main__':
     app.run()
+
+# i've been trying to make it so when you click on something,
+# the computer pulls the id of the thing you clicked on and stores it in a {0}
+# and uses that id with a specific template
+
+# maybe i should be using the form for blog entry creation to generate the new page?
+

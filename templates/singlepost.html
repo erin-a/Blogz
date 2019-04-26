@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h1>TEST</h1>
-        {% for item in blog_entries %}
-                <h2>{{item.title}}</h2>
-                <h1>{{item.body}}</h1>
-        {% endfor %}
+<h2>{{blog_id.title}}</h2>
+<h1>{{blog_id.body}}</h1>
 
 {% endblock %}

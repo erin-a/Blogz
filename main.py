@@ -26,7 +26,7 @@ class Blog(db.Model):
 # instructions says i need separate handler class for each page - but I only have 1...
 
 @app.route('/newpost', methods=['POST', 'GET'])
-def verify_entry():
+def create_entry():
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -51,7 +51,8 @@ def verify_entry():
             db.session.add(new_entry)
             db.session.commit()    
             blog_entries = Blog.query.all() 
-            return render_template('newpost.html', title = "Bloggidy", blog_entries=blog_entries)
+            return redirect('/test')
+            #return render_template('newpost.html', title = "Bloggidy", blog_ent`ries=blog_entries)
         else:
             # needs to return/redirect the page below, it is not doing this now
             return render_template ('newpost.html', title_error=title_error, body_error=body_error)
@@ -66,17 +67,20 @@ def display_entries():
     return render_template('blog.html', title = "Bloggidy", blog_entries=blog_entries)
 
 #for individual blog pages
-@app.route('/id', methods=['GET'])
+@app.route('/test', methods=['GET'])
+#'/blog?id={0}'
 def display_blog():
-    title = request.args.get('title')
-    return render_template('singlepost.html', title=title)
-
 #    id = request.form['id']
-#    title = request.form['title']
-#    body = request.form['body']
-#    specific_post = Blog(title, body)
-#    blog_post = Blog.query.filter(id)
-#    return render_template('base.html', title = "Bloggidy", specific_post=specific_post)
+    blog_entries = request.args.get(id)
+    blog_id = request.args.get('id')
+    return render_template('singlepost.html', id=id)
+
+ #   id = request.form['id']
+ #   title = request.form['title']
+ #   body = request.form['body']
+ #   specific_post = Blog(title, body)
+ #   blog_post = Blog.query.filter(id)
+ #   return render_template('base.html', title = "Bloggidy", specific_post=specific_post)
 
 if __name__ == '__main__':
     app.run()

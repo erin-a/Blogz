@@ -9,7 +9,7 @@
     <h1>Previous Blog Posts</h1>
     <ul>
         {% for item in blog_entries %}
-        <h3>{{item.title}}</h3>
+        <h3><a href="/test">{{item.title}}</a></h3>
         {{item.body}}<br><br>
         {% endfor %}
     </ul>

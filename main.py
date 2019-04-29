@@ -6,7 +6,7 @@ template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:beproductive@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:beproductive@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 #app.secret_key = "34asdf98" 
@@ -15,17 +15,29 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.String(5000))
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    #owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __init__(self, title, body): #will need to add owner inside parentheses if we reanact that
+    def __init__(self, title, body, owner): 
         self.title = title
-        self.body = body #if this is supposed to be unique, wouldn't the id be better to use here? do i need to require the blog titles to be unique?
-        #self.owner = owner
+        self.body = body
+        self.owner = owner
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(60))
+    password = db.Column(db.String(16))
+    blogs = db.relationship('Blog', backref='owner')
+
+    def __init__(self, username, passord, blogs):
+        self.username = username
+        self.password = password
+        self.blogs = blogs
+
 
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def create_entry():
+    # will need to figure out how to incorporate user/owner things
     if request.method == 'GET':
         return render_template('newpost.html')
 
@@ -52,11 +64,7 @@ def create_entry():
             new_entry = Blog(title, body)
             db.session.add(new_entry)
             db.session.commit()    
-            #blog_entries = Blog.query.all() 
-            #blog_id = request.args.get('id')
             blog_id = new_entry.id
-            #blog_url =  'This is a test'
-            #"/blog?id=" + str(blog_id)
             return redirect('/blog?id=' + str(blog_id))
         else:
             return render_template ('newpost.html', title_error=title_error, body_error=body_error)
@@ -74,37 +82,7 @@ def display_entries():
     else:
         blog_entries = Blog.query.all()
         return render_template('blog.html', title = "Bloggidy", blog_entries=blog_entries)
-
-#for individual blog pages
-#@app.route('/display_blog', methods=['GET'])
-#def display_blog():
-#    blog_id = request.args.get('id')
-    #blog_entry = Blog.query.filter_by('blog_id')
-
-    # i need to figure out the blog's id, then tell the html to display the title and body associated with it
-
-    #blog_entry = Blog.query.get(blog_id)
-        #.first()
-    #blog_entries = Blog.query.all()
-    #blog_id = request.args.get('id') #isn't this is pulling the information from the html input form, not a database
-    #title = Blog.query.all('title')
-    #body = request.args.get('body')
-    #one_blog = Blog.query.filter_by(id=blog_id).first()
-
-    # create a string for the URL of the blog to concantenate the full URL
-    #blog_id = request.args.get('id')
-    #display_blog = blog_id
-
-    # different idea - filter by id with jinja inheritance {0}
-    #thing = Blog.query.filter_by(id = '{0}')
-
-    # i dont remember what this idea was
-    #blog = Blog.query.get(blog_id)
-    #blog_entries = Blog.query.all()
-    #blog_title = request.args.get('title')
-    #blog_body = request.args.get('body')
     
-
 if __name__ == '__main__':
     app.run()
 

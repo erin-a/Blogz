@@ -9,11 +9,11 @@
     <h1>Previous Blog Posts</h1>
     <ul>
         {% for item in blog_entries %}
-        <h3><a href='/display_blog?id={{ item.id }}'>{{item.title}}</a></h3>
+        <h3><a href='/blog?id={{ item.id }}'>{{item.title}}</a></h3>
         {{item.body}}<br><br>
         {% endfor %}
     </ul>
 
     {% endif %}
 
-{% endblock %}
+{% endblock %}s

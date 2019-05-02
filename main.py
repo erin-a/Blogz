@@ -53,8 +53,9 @@ def validate_signup():
     password_verify_error = ''
     email_error = ''
     
+    #ASK LUCAS
     #create a test for if username is already used - needs to be unique
-    #if username != username_verify:
+    #if username == username_verify:
     #    username_error = 'The username you entered already exists, please enter try a diffferent username.'
 
     if len(username) <= 3 or len(username) >= 20: 
@@ -80,7 +81,7 @@ def validate_signup():
         db.session.add(new_user)
         db.session.commit()    
         user_id = new_user.id
-        return 'TEST thingamajig'
+        return redirect('/newpost')
         #render_template('welcome.html', username=username)
     else:
         return render_template('signup.html', username_error=username_error, 

@@ -29,10 +29,10 @@ class User(db.Model):
     password = db.Column(db.String(16))
     blogs = db.relationship('Blog', backref='owner')
 
-    def __init__(self, username, passord, blogs):
+    def __init__(self, username, email, password):
         self.username = username
+        self.email = email
         self.password = password
-        self.blogs = blogs
 
 # if there's time, ha! create a home/welcome page with a baby nav option
 
@@ -75,8 +75,12 @@ def validate_signup():
         if '@' not in email and '.' not in email:
             email_error = "Please enter a valid email."
 
-    if not username_error and not password_error and not password_verify_error and not email_error:
-        return 'TEST thingamajig' 
+    if not username_error and not password_error and not password_verify_error and not email_error: 
+        new_user = User(username, email, password)
+        db.session.add(new_user)
+        db.session.commit()    
+        user_id = new_user.id
+        return 'TEST thingamajig'
         #render_template('welcome.html', username=username)
     else:
         return render_template('signup.html', username_error=username_error, 

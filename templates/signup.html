@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>create a blogz account</h1>
+<form action="/signup" method="post">
+    <table>
+        <tr>
+            <td><label for="username">Username</label>
+                <input name="username" value="{{ username }}">
+                <p class="error" style="display:inline-block;">{{username_error}}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="email">Email</label>
+                <input name="email" type="email" value="{{ email }}">
+                <p class="error" style="display:inline-block;">{{email_error}}</p>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Password</label>
+                <input name="password" type="password">
+                <p class="error" style="display:inline-block;">{{password_error}}</p>
+           </td>
+        </tr>
+        <tr>
+            <td><label for="verify">Verify Password</label>
+                <input name="verify" type="password">
+                <p class="error" style="display:inline-block;">{{password_verify_error}}</p>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" value="Sign Up">
+</form>
+{% endblock %}

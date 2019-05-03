@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session, flash
+from flask import Flask, request, redirect, render_template, session
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -34,16 +34,21 @@ class User(db.Model):
         self.email = email
         self.password = password
 
+#not sure if this working, need to work on testing it
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
-    if request.endpoint not in allowed_routes and 'email' not in session:
-        return redirect('/login')
+    if 'email' not in session:
+        redirect('/login')
 
 #@app.route('/')
 #def home():
     #query database, display list of usernames
 
+@app.route('/signup')
+def sign_up_form():
+    allowed_routes = ['login', 'register']
+    if request.endpoint not in allowed_routes and 'email' not in session:
+        return render_template('signup.html')
 
 @app.route('/signup', methods=['POST'])
 def validate_signup():
@@ -51,11 +56,23 @@ def validate_signup():
     password = request.form['password']
     password_verify = request.form['verify']
     email = request.form['email']
+    #username_verify = User.query.get(username=username)
+    #tried .all and .first at the end and instead of the filter by
+    # i think it needs to be a query.get
 
     username_error = ''
     password_error = ''
     password_verify_error = ''
     email_error = ''
+    
+    #if len(username) > 1:
+        #return username_verify 
+        #- trying to test if i'm querying the database correctly
+    #ASK LUCAS - querying the datbase isn't cooperating
+    #create a test for if username is already used - needs to be unique
+    #if username == username_verify:
+      #  return 'testing only'
+        #username_error = 'The username you entered already exists, please enter try a diffferent username.'
 
     if len(username) <= 3 or len(username) >= 20: 
         username_error = "Username must be 3 to 20 characters in length."
@@ -75,39 +92,21 @@ def validate_signup():
         if '@' not in email and '.' not in email:
             email_error = "Please enter a valid email."
 
-
     if not username_error and not password_error and not password_verify_error and not email_error: 
         new_user = User(username, email, password)
         db.session.add(new_user)
         db.session.commit()    
-        user_id = new_user.id
+        session['email'] = email
+        #user_id = new_user.id
         return redirect('/newpost')
-        #check for existing name in database
     else:
         return render_template('signup.html', username_error=username_error, 
         password_error=password_error, 
         password_verify_error=password_verify_error, 
         email_error=email_error)
 
-
-    #if not username_error and not password_error and not password_verify_error and not email_error:        
-    #    username_verify = User.query.filter_by(username=username).first()
-    #    if not username_verify:
-    #        new_user = User(username, email, password)
-    #        db.session.add(new_user)
-    #        db.session.commit()    
-    #        session['email'] = email
-    #        #user_id = new_user.id
-    #        return redirect('/newpost')
-    #    else:
-    #        flash("existing user", 'error')
-    #        #existing_error = 'The username you entered already exists, please try a diffferent username.'        
-    #else:
-    #    return render_template('signup.html', username_error=username_error, 
-    #    password_error=password_error, 
-    #    password_verify_error=password_verify_error, 
-    #    email_error=email_error)
-
+    
+    
 @app.route('/valid_sign_up')
 def valid_sign_up():
     username = request.args.get('username') 
@@ -116,7 +115,6 @@ def valid_sign_up():
 #not working
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -147,9 +145,7 @@ def logout():
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def create_entry():
-
-    owner = User.query.filter_by(email=session['email']).first()
-
+    # will need to figure out how to incorporate user/owner things
     if request.method == 'GET':
         return render_template('newpost.html')
 
@@ -173,7 +169,7 @@ def create_entry():
             body_error = "Chatty Kathy, wrap it up under 5000 characters. Please and thank, you."
 
         if not title_error and not body_error:
-            new_entry = Blog(title, body, owner)
+            new_entry = Blog(title, body)
             db.session.add(new_entry)
             db.session.commit()    
             blog_id = new_entry.id
@@ -185,6 +181,7 @@ def create_entry():
 @app.route('/blog')
 def display_entries():
     blog_id = request.args.get('id')
+        # ask lucas - why is it: if (blog_id) and not blog_id == True
     if (blog_id):
         blog_entry = Blog.query.get(blog_id)
         return render_template('singlepost.html', title = "blogz", blog_entry=blog_entry)

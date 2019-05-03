@@ -9,15 +9,18 @@
             <td><label for="email">Email</label></td>
             <td>
                 <input name="email" type="email" value="{{ email }}">
+                <p class="error" style="display:inline-block;">{{email_error}}</p>
             </td>
         </tr>
         <tr>
             <td><label for="password">Password</label></td>
             <td>
                 <input name="password" type="password">
+                <p class="error" style="display:inline-block;">{{password_error}}</p>
             </td>
         </tr>
     </table>
+    <br>
     <input type="submit" value="Login">
 </form>
 {% endblock %}

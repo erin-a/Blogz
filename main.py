@@ -40,7 +40,7 @@ def require_login():
     if request.endpoint not in allowed_routes and 'email' not in session:
         return redirect('/login')
 
-@app.route('/index')
+@app.route('/')
 def display_usernames():
     user_names = User.query.all()
     return render_template('index.html', user_names=user_names)

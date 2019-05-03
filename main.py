@@ -34,16 +34,16 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-@app.before_request
-def require_login():
-    allowed_routes = ['login', 'signup']
-    if request.endpoint not in allowed_routes and 'email' not in session:
-        return redirect('/login')
+#@app.before_request
+#def require_login():
+#    allowed_routes = ['login', 'signup']
+#    if request.endpoint not in allowed_routes and 'email' not in session:
+#        return redirect('/login')
 
-#@app.route('/')
-#def home():
-    #query database, display list of usernames
-
+@app.route('/')
+def display_usernames():
+    user_names = User.query.all()
+    return render_template('index.html', user_names=user_names)
 
 @app.route('/signup', methods=['POST'])
 def validate_signup():
@@ -80,7 +80,7 @@ def validate_signup():
         new_user = User(username, email, password)
         db.session.add(new_user)
         db.session.commit()    
-        user_id = new_user.id
+        #user_id = new_user.id
         return redirect('/newpost')
         #check for existing name in database
     else:
@@ -88,7 +88,6 @@ def validate_signup():
         password_error=password_error, 
         password_verify_error=password_verify_error, 
         email_error=email_error)
-
 
     #if not username_error and not password_error and not password_verify_error and not email_error:        
     #    username_verify = User.query.filter_by(username=username).first()
@@ -111,9 +110,8 @@ def validate_signup():
 @app.route('/valid_sign_up')
 def valid_sign_up():
     username = request.args.get('username') 
-    return render_template('welcome.html', username=username)
+    return render_template('newpost.html', username=username)
 
-#not working
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 
@@ -142,7 +140,7 @@ def login():
 @app.route('/logout')
 def logout():
     del session['email']
-    return redirect('/login')
+    return redirect('/blog')
 
 
 @app.route('/newpost', methods=['POST', 'GET'])

@@ -34,16 +34,20 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-#@app.before_request
-#def require_login():
-#    allowed_routes = ['login', 'signup']
-#    if request.endpoint not in allowed_routes and 'email' not in session:
-#        return redirect('/login')
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'display_entries', 'sign_up_form', 'validate_signup', 'display_usernames']
+    if request.endpoint not in allowed_routes and 'email' not in session:
+        return redirect('/login')
 
-@app.route('/')
+@app.route('/index')
 def display_usernames():
     user_names = User.query.all()
     return render_template('index.html', user_names=user_names)
+
+@app.route('/signup')
+def sign_up_form():
+    return render_template('signup.html')
 
 @app.route('/signup', methods=['POST'])
 def validate_signup():
@@ -56,6 +60,10 @@ def validate_signup():
     password_error = ''
     password_verify_error = ''
     email_error = ''
+
+    #check for existing name in database
+    #username_verify = User.query.filter_by(username=username).first()
+    #if not username_verify, do checks - remember to indent and add an else
 
     if len(username) <= 3 or len(username) >= 20: 
         username_error = "Username must be 3 to 20 characters in length."
@@ -75,14 +83,12 @@ def validate_signup():
         if '@' not in email and '.' not in email:
             email_error = "Please enter a valid email."
 
-
     if not username_error and not password_error and not password_verify_error and not email_error: 
         new_user = User(username, email, password)
         db.session.add(new_user)
         db.session.commit()    
-        #user_id = new_user.id
+        user_id = new_user.id
         return redirect('/newpost')
-        #check for existing name in database
     else:
         return render_template('signup.html', username_error=username_error, 
         password_error=password_error, 
@@ -179,14 +185,17 @@ def create_entry():
         else:
             return render_template ('newpost.html', title_error=title_error, body_error=body_error)
 
-#create app to display all blog entries
+#create app to display list of all blog entries AND individual entries
 @app.route('/blog')
 def display_entries():
     blog_id = request.args.get('id')
+    # test for if logged in
     if (blog_id):
         blog_entry = Blog.query.get(blog_id)
         return render_template('singlepost.html', title = "blogz", blog_entry=blog_entry)
     else:
+        # if logged in return just that user's blog posts
+        # if not logged in, return all blog posts
         blog_entries = Blog.query.all()
         return render_template('blog.html', title = "blogz", blog_entries=blog_entries)
     

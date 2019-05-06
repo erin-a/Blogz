@@ -2,6 +2,7 @@
 {% block content %}
 
 <h2>{{ blog_entry.title }}</h2>
+<h5><a href='/blog?owner_id={{ blog_entry.id }}'>written by: {{blog_entry.id}}</a></h5>
 <h3>{{ blog_entry.body }}</h3>
 
 {% endblock %}

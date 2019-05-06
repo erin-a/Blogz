@@ -9,8 +9,10 @@
     <h1>Previous Blog Posts</h1>
     <ul>
         {% for item in blog_entries %}
-        <h3><a href='/blog?id={{ item.id }}'>{{item.title}}</a></h3>
-        {{item.body}}<br><br>
+        <h3><a href='/blog?id={{ item.owner_id }}'>{{item.title}}</a></h3>
+        {{item.body}}<br>
+
+        <h5><a href='/blog?owner_id={{ item.id }}'>written by: {{ item.id }}</a></h5><br><br>
         {% endfor %}
     </ul>
 

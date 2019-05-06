@@ -95,24 +95,6 @@ def validate_signup():
         password_verify_error=password_verify_error, 
         email_error=email_error)
 
-    #if not username_error and not password_error and not password_verify_error and not email_error:        
-    #    username_verify = User.query.filter_by(username=username).first()
-    #    if not username_verify:
-    #        new_user = User(username, email, password)
-    #        db.session.add(new_user)
-    #        db.session.commit()    
-    #        session['email'] = email
-    #        #user_id = new_user.id
-    #        return redirect('/newpost')
-    #    else:
-    #        flash("existing user", 'error')
-    #        #existing_error = 'The username you entered already exists, please try a diffferent username.'        
-    #else:
-    #    return render_template('signup.html', username_error=username_error, 
-    #    password_error=password_error, 
-    #    password_verify_error=password_verify_error, 
-    #    email_error=email_error)
-
 @app.route('/valid_sign_up')
 def valid_sign_up():
     username = request.args.get('username') 
@@ -188,18 +170,34 @@ def create_entry():
 #create app to display list of all blog entries AND individual entries
 @app.route('/blog')
 def display_entries():
+
+    #owner = User.query.filter_by(email=session['email']).first()
+
+
+    #below this displays all entries:
     blog_id = request.args.get('id')
-    # test for if logged in
+    owner_id = request.args.get('owner_id')
     if (blog_id):
-        blog_entry = Blog.query.get(blog_id)
+        blog_entry = Blog.query.get(blog_id).first()
         return render_template('singlepost.html', title = "blogz", blog_entry=blog_entry)
+    elif (owner_id):
+        user_blogs = Blog.query.filter_by(owner_id=owner_id).all()
+        return render_template('userposts.html', title="blogz", user_blogs=user_blogs)
     else:
-        # if logged in return just that user's blog posts
-        # if not logged in, return all blog posts
         blog_entries = Blog.query.all()
         return render_template('blog.html', title = "blogz", blog_entries=blog_entries)
+
+  
+        # get user_id
+        # if there is a user id
+            # 
+
+
+        
+        #user_blogs = Blog.query.all(owner=owner).all()
+        #return render_template('userposts.html', user_blogs=user_blogs)
     
 if __name__ == '__main__':
     app.run()
 
-
+# fix html for pulling uesr name instead of id number

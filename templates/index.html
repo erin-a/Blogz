@@ -9,8 +9,7 @@
         <h1>Bloggidy Bloggers</h1>
         <ul>
             {% for item in user_names %}
-            <li><h3>{{item.username}}</li></h3></li>
- 
+            <li><a href='/blog?owner_id={{ item.id }}'>{{item.username}}</a></li>
             {% endfor %}
         </ul>
 

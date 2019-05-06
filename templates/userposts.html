@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if user_blogs|length == 0 %}
+    <p>This user hasn't posted yet</p>
+    {% else %}
+
+    <h1>{{username}}'s Blog Posts</h1>
+    <ul>
+        {% for item in user_blogs %}
+        <h3>{{item.title}}</a></h3>
+        {{item.body}}<br><br>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+
+{% endblock %}s
